@@ -1,12 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+// ReSharper disable once CheckNamespace
 public class Puzzle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [SerializeField] PuzzleGame _puzzleGame;
-    bool _drag = false;
+    [SerializeField] private PuzzleGame _puzzleGame;
+
+    [Serializable] public class Point
+    {
+        [SerializeField] private Collider _collider;
+        [SerializeField] private Collider _collider2;
+        private bool _conect;
+    }
+
+    [SerializeField] private Point[] _points;
+    private bool _drag = false;
 
 
     void Update()
@@ -35,6 +46,7 @@ public class Puzzle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public void OnEndDrag(PointerEventData eventData)
     {
         _drag = false;
+        
     }
 
 }
