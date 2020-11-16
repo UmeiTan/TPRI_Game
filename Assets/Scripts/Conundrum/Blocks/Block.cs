@@ -1,26 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Block : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    enum DirectionDrag { Horizontal, Vertical };
-    [SerializeField] DirectionDrag _direction = DirectionDrag.Horizontal;
-    [SerializeField] Rigidbody _rigidbody;
-    [SerializeField] BlocksGame _blocksGame;
+    private enum DirectionDrag { Horizontal, Vertical };
+    [SerializeField] private DirectionDrag _direction = DirectionDrag.Horizontal;
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private BlocksGame _blocksGame;
 
-    Vector3 _pos;
+    private Vector3 _pos;
+    private bool _drag;
     private void Start()
     {
         _pos = transform.position;
         //rigidbody.velocity = new Vector3(0, 10, 0);
     }
 
+    private void Update()
+    {
+        if (!_drag)
+        {
+            _rigidbody.velocity = Vector3.zero;
+        }
+    }
+
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log("Drag");
-
         if (_direction == DirectionDrag.Horizontal)
         {
             transform.position = new Vector3(eventData.pointerCurrentRaycast.worldPosition.x, _pos.y, _pos.z);
@@ -38,11 +43,11 @@ public class Block : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-
+        _drag = true;
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        _rigidbody.velocity = Vector3.zero;
         transform.localPosition = new Vector3(0, 0, transform.localPosition.z);
+        _drag = false;
     }
 }

@@ -1,22 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UsedSubject : ActiveObject
 {
-    [SerializeField] Vector3 _positionOffset;
-    [SerializeField] Vector3 _newRotation;
-    [SerializeField] Image _image;
+    [SerializeField] private Vector3 _positionOffset;
+    [SerializeField] private Vector3 _newRotation;
+    [SerializeField] private Image _image;
+    [SerializeField] private GameObject _mesh;
+    [SerializeField] private Vector3 _newScale;
+    [SerializeField] private Collider _firstCollider;
+    [SerializeField] private int _keyNumber = -1;
+    [SerializeField] private int _actionСounter = 1;
+
     public Image Image => _image;
-    [SerializeField] GameObject _mesh;
-    [SerializeField] Vector3 _newScale;
-    [SerializeField] Collider _firstCollider;
-    [SerializeField] int _keyNumber = -1;
     public int KeyNumber => _keyNumber;
-    [SerializeField] int _actionСounter = 1;
+
     enum State { NotFind, Take, InInventory}
-    [SerializeField] State _state = State.NotFind;
+    [SerializeField] private State _state = State.NotFind;
 
 
     public void SetImage(ItemSlot slot)
@@ -29,7 +29,7 @@ public class UsedSubject : ActiveObject
         transform.localScale = _newScale;
     }
 
-    override public void UseObject(PlayerInteraction playerInteraction)
+    public override void UseObject(PlayerInteraction playerInteraction)
     {
         if (_state == State.NotFind)
         {

@@ -1,24 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
 public class BlocksGame : MonoBehaviour
 {
-    [SerializeField] GameObject _playerCamera;
-    [SerializeField] GameObject _gameCamera;
-    [SerializeField] Collider _winPoint;
-    [SerializeField] Vector2 _minimum;
-    [SerializeField] Vector2 _maximum;
+    [SerializeField] private GameObject _playerCamera;
+    [SerializeField] private GameObject _gameCamera;
+    [SerializeField] private Collider _winPoint;
+    [SerializeField] private Vector2 _minimum;
+    [SerializeField] private Vector2 _maximum;
 
-    public Vector2 Minimum { get => _minimum;
-        private set => _minimum = value;
-    }
-    public Vector2 Maximum { get => _maximum;
-        private set => _maximum = value;
-    }
+    public Vector2 Minimum => _minimum;
 
-    
+    public Vector2 Maximum => _maximum;
+
 
     public void StartGame()
     {
