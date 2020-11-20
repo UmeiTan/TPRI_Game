@@ -122,121 +122,120 @@ public class Puzzle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     private void Connection(bool rek = false)
     {
-        foreach (var point in _points) //проверяем все поинты взятого пазла
+        try
         {
-            _connectCollider = point.GetConect();
-            if (_connectCollider) //получен коллайдер поинта лежащего пазла 
+            foreach (var point in _points) //проверяем все поинты взятого пазла
             {
-                if (ValidateConnect()) //повороты пазлов совпадают
+                _connectCollider = point.GetConect();
+                if (_connectCollider) //получен коллайдер поинта лежащего пазла 
                 {
-                    Destroy(point.gameObject);
-                    Destroy(_connectCollider.gameObject);
-                    //Debug.Log("-point   " + point);
-                    _connectCollider.GetComponentInParent<Puzzle>()._points.Remove(_connectCollider.GetComponent<PuzzlePoint>());
-
-                    if (transform.parent.GetComponent<Canvas>()) //взятый пазл один
+                    if (ValidateConnect()) //повороты пазлов совпадают
                     {
-                        Vector3 delta = _puzzleGame.GetDeltaPosition(this, _connectCollider.GetComponentInParent<Puzzle>());
-                        if (_connectCollider.transform.parent.parent.GetComponent<Canvas>()) //лежащий пазл один
+                        Destroy(point.gameObject);
+                        Destroy(_connectCollider.gameObject);
+                        _connectCollider.GetComponentInParent<Puzzle>()._points.Remove(_connectCollider.GetComponent<PuzzlePoint>());
+
+                        if (transform.parent.GetComponent<Canvas>()) //взятый пазл один
                         {
-                            Debug.Log("1.1-point   " + point);
-                            var puzzleGroup = Instantiate(_puzzleGame.PuzzleGroup, transform.parent.transform);
-                            puzzleGroup.transform.localEulerAngles = transform.localEulerAngles;
-
-                            transform.parent = puzzleGroup.transform;
-                            _connectCollider.transform.parent.parent = puzzleGroup.transform;
-
-                            _dragOneObject = false;
-                            _connectCollider.GetComponentInParent<Puzzle>()._dragOneObject = false;
-
-                            _connectCollider.transform.parent.transform.localEulerAngles = Vector3.zero;
-                            transform.localEulerAngles = Vector3.zero;
-
-                            _connectCollider.transform.parent.transform.localPosition =
-                                new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
-                        }
-                        else //лежащий пазл в группе
-                        {
-                            Debug.Log("1.2-point   " + point);
-                            Transform temp = _connectCollider.transform.parent;
-                            transform.parent = temp.parent;
-                            _dragOneObject = false;
-                            transform.localEulerAngles = Vector3.zero;
-                            transform.localPosition = new Vector3(temp.localPosition.x - delta.x, temp.localPosition.y - delta.y, 0);
-                        }
-                    }
-                    else //взятый пазл в группе
-                    {
-                        if (_connectCollider.transform.parent.parent.GetComponent<Canvas>()) //лежащий пазл один
-                        {
-                            Debug.Log("2.1-point   " + point);
                             Vector3 delta = _puzzleGame.GetDeltaPosition(this, _connectCollider.GetComponentInParent<Puzzle>());
-                            Transform temp = _connectCollider.transform.parent;
-                            temp.parent = transform.parent.transform;
-                            temp.localEulerAngles = Vector3.zero;
-                            _connectCollider.GetComponentInParent<Puzzle>()._dragOneObject = false;
+                            if (_connectCollider.transform.parent.parent.GetComponent<Canvas>()) //лежащий пазл один
+                            {
+                                var puzzleGroup = Instantiate(_puzzleGame.PuzzleGroup, transform.parent.transform);
+                                puzzleGroup.transform.localEulerAngles = transform.localEulerAngles;
 
-                            temp.transform.localPosition =
-                                new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
-                            
-                            if(!rek) temp.GetComponent<Puzzle>().Connection(true);
+                                transform.parent = puzzleGroup.transform;
+                                _connectCollider.transform.parent.parent = puzzleGroup.transform;
 
+                                _dragOneObject = false;
+                                _connectCollider.GetComponentInParent<Puzzle>()._dragOneObject = false;
+
+                                _connectCollider.transform.parent.transform.localEulerAngles = Vector3.zero;
+                                transform.localEulerAngles = Vector3.zero;
+
+                                _connectCollider.transform.parent.transform.localPosition =
+                                    new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
+                            }
+                            else //лежащий пазл в группе
+                            {
+                                Transform temp = _connectCollider.transform.parent;
+                                transform.parent = temp.parent;
+                                _dragOneObject = false;
+                                transform.localEulerAngles = Vector3.zero;
+                                transform.localPosition = new Vector3(temp.localPosition.x - delta.x, temp.localPosition.y - delta.y, 0);
+                            }
                         }
-                        else //лежащий пазл в группе
+                        else //взятый пазл в группе
                         {
-                            if (point.transform.parent.parent == _connectCollider.transform.parent.parent)
+                            if (_connectCollider.transform.parent.parent.GetComponent<Canvas>()) //лежащий пазл один
                             {
-                                Debug.Log("2.0-point   " + point);
-                                continue; //пазлы в одной группе
+                                Vector3 delta = _puzzleGame.GetDeltaPosition(this, _connectCollider.GetComponentInParent<Puzzle>());
+                                Transform temp = _connectCollider.transform.parent;
+                                temp.parent = transform.parent.transform;
+                                temp.localEulerAngles = Vector3.zero;
+                                _connectCollider.GetComponentInParent<Puzzle>()._dragOneObject = false;
+
+                                temp.transform.localPosition =
+                                    new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
+
+                                if (!rek) temp.GetComponent<Puzzle>().Connection(true);
+
                             }
-
-                            Transform puzzles = _connectCollider.transform.parent.parent;
-                            if (transform.parent.childCount >= puzzles.childCount) //взятых пазлов в группе больше
+                            else //лежащий пазл в группе
                             {
-                                Debug.Log("2.2-point   " + point);
-                                while (puzzles.childCount != 0) //перекидываем лежащие пазлы в группу взятых
+                                if (point.transform.parent.parent == _connectCollider.transform.parent.parent)
                                 {
-                                    Transform puzzle = puzzles.GetChild(0);
-                                    Vector3 delta = _puzzleGame.GetDeltaPosition(this, puzzle.GetComponent<Puzzle>());
-                                    puzzle.parent = transform.parent.transform;
-                                    puzzle.localEulerAngles = Vector3.zero;
-
-                                    puzzle.transform.localPosition =
-                                        new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
-                                    
-                                    if (!rek) puzzle.GetComponent<Puzzle>().Connection(true);
+                                    continue; //пазлы в одной группе
                                 }
-                                Destroy(puzzles.gameObject);
-                            }
-                            else //лежащих пазлов в группе больше
-                            {
-                                Debug.Log("2.3-point   " + point);
-                                puzzles = transform.parent;
-                                while (puzzles.childCount != 0) //перекидываем взятые пазлы в группу лежащих
+
+                                Transform puzzles = _connectCollider.transform.parent.parent;
+                                if (transform.parent.childCount >= puzzles.childCount) //взятых пазлов в группе больше
                                 {
-                                    Transform puzzle = transform.parent.GetChild(0);
-                                    Vector3 delta = _puzzleGame.GetDeltaPosition(_connectCollider.GetComponentInParent<Puzzle>(), 
-                                                                                 puzzle.GetComponent<Puzzle>());
-                                    puzzle.parent = _connectCollider.transform.parent.parent.transform;
-                                    puzzle.localEulerAngles = Vector3.zero;
+                                    while (puzzles.childCount != 0) //перекидываем лежащие пазлы в группу взятых
+                                    {
+                                        Transform puzzle = puzzles.GetChild(0);
+                                        Vector3 delta = _puzzleGame.GetDeltaPosition(this, puzzle.GetComponent<Puzzle>());
+                                        puzzle.parent = transform.parent.transform;
+                                        puzzle.localEulerAngles = Vector3.zero;
 
-                                    puzzle.transform.localPosition =
-                                        new Vector3(_connectCollider.transform.parent.localPosition.x + delta.x,
-                                            _connectCollider.transform.parent.localPosition.y + delta.y, 0);
-                                   
-                                    if (!rek) puzzle.GetComponent<Puzzle>().Connection(true);
+                                        puzzle.transform.localPosition =
+                                            new Vector3(transform.localPosition.x + delta.x, transform.localPosition.y + delta.y, 0);
+
+                                        if (!rek) puzzle.GetComponent<Puzzle>().Connection(true);
+                                    }
+                                    Destroy(puzzles.gameObject);
                                 }
-                                Destroy(puzzles.gameObject);
+                                else //лежащих пазлов в группе больше
+                                {
+                                    puzzles = transform.parent;
+                                    while (puzzles.childCount != 0) //перекидываем взятые пазлы в группу лежащих
+                                    {
+                                        Transform puzzle = transform.parent.GetChild(0);
+                                        Vector3 delta = _puzzleGame.GetDeltaPosition(_connectCollider.GetComponentInParent<Puzzle>(),
+                                                                                     puzzle.GetComponent<Puzzle>());
+                                        puzzle.parent = _connectCollider.transform.parent.parent.transform;
+                                        puzzle.localEulerAngles = Vector3.zero;
+
+                                        puzzle.transform.localPosition =
+                                            new Vector3(_connectCollider.transform.parent.localPosition.x + delta.x,
+                                                _connectCollider.transform.parent.localPosition.y + delta.y, 0);
+
+                                        if (!rek) puzzle.GetComponent<Puzzle>().Connection(true);
+                                    }
+                                    Destroy(puzzles.gameObject);
+                                }
                             }
                         }
+                        _puzzleGame.CheckAllPuzzlePoints();
                     }
-                    _puzzleGame.CheckAllPuzzlePoints();
-                }
 
-                _connectCollider = null;
+                    _connectCollider = null;
+                }
             }
         }
-        
+        catch (System.Exception)
+        {
+            _drag = false;
+        }
     }
 
     private bool PointNull(PuzzlePoint point)
@@ -249,9 +248,13 @@ public class Puzzle : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         Vector3 onePuzzle = (transform.parent.GetComponent<Canvas>())
             ? transform.localEulerAngles
             : transform.parent.localEulerAngles;
+        if (onePuzzle.z > 270) onePuzzle.z -= 360; 
+        if (onePuzzle.z < -270) onePuzzle.z += 360; 
         Vector3 twoPuzzle = (_connectCollider.transform.parent.parent.GetComponent<Canvas>())
             ? _connectCollider.transform.parent.localEulerAngles
             : _connectCollider.transform.parent.parent.localEulerAngles;
+        if (twoPuzzle.z > 270) twoPuzzle.z -= 360;
+        if (twoPuzzle.z < -270) twoPuzzle.z += 360;
         return twoPuzzle.z - onePuzzle.z < 4 && twoPuzzle.z - onePuzzle.z > -4;
     }
 

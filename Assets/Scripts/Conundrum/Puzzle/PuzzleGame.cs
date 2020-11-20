@@ -11,7 +11,7 @@ public class PuzzleGame : MonoBehaviour
     [SerializeField] private Vector2 _minimum;
     [SerializeField] private Vector2 _maximum;
     [SerializeField] private GameObject _puzzleGroup;
-
+    [SerializeField] private float shiftX;
     public Puzzle[] Puzzles => _pazzles;
     public Vector2 Minimum => _minimum;
     public Vector2 Maximum => _maximum;
@@ -21,13 +21,8 @@ public class PuzzleGame : MonoBehaviour
     private GameObject _temp;
     public void StartGame(Transform parent)
     {
-        _temp = parent.gameObject;
+        _temp = parent.gameObject; //canvas
         _puzzlePoints.AddRange(parent.GetComponentsInChildren<PuzzlePoint>());
-        //foreach (var puzzle in _pazzles)
-        //{
-        //    puzzle.GetComponent<SpriteRenderer>().enabled = false;
-        //}
-
     }
 
     public Vector3 GetDeltaPosition(Puzzle onePuzzle, Puzzle twoPuzzle)
@@ -40,8 +35,18 @@ public class PuzzleGame : MonoBehaviour
         _puzzlePoints.RemoveAll(PointNull);
         if (_puzzlePoints.Count == 0 || _temp.transform.childCount == 1)
         {
-            _temp.transform.GetChild(0).transform.localEulerAngles = Vector3.zero;
-            _temp.transform.GetChild(0).FindChild("puzzle 0").GetChild(0).GetComponent<Image>().color = Color.white;
+            Transform temp = _temp.transform.GetChild(0);
+            temp.transform.localEulerAngles = Vector3.zero;
+            temp = temp.Find("puzzle 0").GetChild(0);
+            temp.gameObject.SetActive(true);
+            temp.GetComponent<Image>().color = Color.white;
+            temp.GetComponent<SpriteRenderer>().enabled = true;
+            for(int i = 0; i < _pazzles.Length; i++)
+            {
+                _pazzles[i].transform.localPosition = new Vector3(_pazzlesPos[i].x + shiftX, _pazzlesPos[i].y, _pazzlesPos[i].z);
+            }
+            _temp.GetComponentInParent<ActiveSubject>().Inactive();
+            _temp.GetComponent<Canvas>().enabled = false;
         }
     }
 

@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class BlocksGame : MonoBehaviour
 {
-    [SerializeField] private GameObject _playerCamera;
-    [SerializeField] private GameObject _gameCamera;
-    [SerializeField] private Collider _winPoint;
+    [SerializeField] private Canvas _canvas;
+    [SerializeField] private GameObject _key;
     [SerializeField] private Vector2 _minimum;
     [SerializeField] private Vector2 _maximum;
+    [SerializeField] private UnityEvent _wiEvent;
 
     public Vector2 Minimum => _minimum;
 
@@ -15,20 +17,19 @@ public class BlocksGame : MonoBehaviour
 
     public void StartGame()
     {
-        _gameCamera.SetActive(true);
-        _playerCamera.SetActive(false);
+        _canvas.enabled = true;
     }
 
-    public void EndGame()
+    private void OnTriggerEnter(Collider other)
     {
-        _gameCamera.SetActive(false);
-        _playerCamera.SetActive(true);
+        if (other.CompareTag("Finish"))
+        {
+            _canvas.enabled = false;
+            _wiEvent.Invoke();
+        }
+        else
+        {
+            Debug.LogError("в коллайдер попал не тот объект = " + other.gameObject);
+        }
     }
-
-    public void FinishGame()
-    {
-        _gameCamera.SetActive(false);
-        _playerCamera.SetActive(true);
-    }
-
 }

@@ -2,8 +2,8 @@
 
 public class ItemSlot : MonoBehaviour
 {
-    [SerializeField] bool _taken = false;
-    GameObject _item;
+    [SerializeField] private bool _taken = false;
+    [SerializeField] private GameObject _item;
 
     public bool Taken => _taken;
 

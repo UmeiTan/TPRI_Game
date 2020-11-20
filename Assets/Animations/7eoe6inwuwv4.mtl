@@ -1,0 +1,24 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v5.0.639693989)
+
+newmtl iron mat
+Kd 0.18975477 0.18975477 0.18975477
+Ka 0 0 0
+Ks 1 1 1
+Ns 50
+illum 2
+map_Kd Procedural,num=0,type=Clouds
+
+newmtl Gold
+Kd 0.41332614 0.3408435 0.18724631
+Ka 0 0 0
+Ks 1 0.76920283 0.2312215
+Ns 80
+illum 2
+
+newmtl DefaultMaterial
+Kd 0.60000002 0.60000002 0.60000002
+Ka 0 0 0
+Ks 0.60000002 0.60000002 0.60000002
+illum 1
+

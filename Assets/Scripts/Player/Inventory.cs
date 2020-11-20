@@ -33,7 +33,8 @@ public class Inventory : MonoBehaviour
 
         for (; i + 1 < _slots.Length && _slots[i + 1].Taken == true; i++)
         {
-           // _slots[i].Item = _slots[i + 1].Item;
+            // _slots[i].Item = _slots[i + 1].Item;
+            _slots[i].Item = _slots[i + 1].Item;
             _slots[i + 1].Item.GetComponent<UsedSubject>().SetImage(_slots[i]);
         }
 
